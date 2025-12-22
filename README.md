@@ -1,1 +1,3 @@
-API_KEY="sk-vbcbdbndcndjcn437diufef"
+import os
+
+API_KEY = os.environ.get("API_KEY", "")
