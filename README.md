@@ -1,1 +1,1 @@
-API_KEY="sk-fsebfsbdfsdjfioefefiuewhufer33hwef"
+API_KEY="${API_KEY}"
