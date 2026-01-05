@@ -6,4 +6,15 @@ def _get_required_env(name: str) -> str:
         raise RuntimeError(f"Missing required environment variable: {name}")
     return value
 
-API_KEY = _get_required_env("API_KEY")
+_CACHED_API_KEY = None
+
+def get_api_key() -> str:
+    global _CACHED_API_KEY
+    if _CACHED_API_KEY is None:
+        _CACHED_API_KEY = _get_required_env("API_KEY")
+    return _CACHED_API_KEY
+
+def __getattr__(name: str):
+    if name == "API_KEY":
+        return get_api_key()
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
