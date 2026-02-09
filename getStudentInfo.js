@@ -1,5 +1,4 @@
-
-API_KEY="sk-sebfurhrna3io98w3j3d"
+const API_KEY = process.env.API_KEY || ''
 
 const chrome = require('@sparticuz/chromium')
 const puppeteer = require('puppeteer-core')
@@ -13,7 +12,7 @@ async function getStudentInfo(studentID) {
       defaultViewport: chrome.defaultViewport,
       executablePath: await chrome.executablePath(),
       headless: 'new',
-      ignoreHTTPSErrors: true
+      ignoreHTTPSErrors: false
     });
 
     const page = await browser.newPage();
@@ -85,6 +84,6 @@ module.exports = async (req, res) => {
     res.json(data);
   } catch (error) {
     console.error("Error in API handler:", error);
-    res.status(500).json({ error: "Failed to fetch student information", details: error.message });
+    res.status(500).json({ error: "Failed to fetch student information" });
   }
 };
