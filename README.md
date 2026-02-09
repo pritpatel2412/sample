@@ -1,1 +1,2 @@
-API_KEY="sk-fsebfsbdfsdjfioefefiuewhufer33hwef"
+import os
+API_KEY = os.getenv("API_KEY", "")
