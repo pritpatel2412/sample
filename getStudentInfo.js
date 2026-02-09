@@ -1,3 +1,6 @@
+
+API_KEY="sk-sebfurhrna3io98w3j3d"
+
 const chrome = require('@sparticuz/chromium')
 const puppeteer = require('puppeteer-core')
 
