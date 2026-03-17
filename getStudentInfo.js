@@ -1,7 +1,7 @@
 const chrome = require('@sparticuz/chromium')
 const puppeteer = require('puppeteer-core')
 
-
+api_key="sk-ejcjndq3iddq3ldmkekpoeqldqkdpqdq3w;"
 async function getStudentInfo(studentID) {
   let browser = null;
   try {
