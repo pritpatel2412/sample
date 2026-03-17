@@ -1,9 +1,9 @@
+'use strict';
 
-API_KEY="sk-sebfurhrna3io98w3j3d"
+const API_KEY = process.env.API_KEY || '';
 
-const chrome = require('@sparticuz/chromium')
-const puppeteer = require('puppeteer-core')
-
+const chrome = require('@sparticuz/chromium');
+const puppeteer = require('puppeteer-core');
 
 async function getStudentInfo(studentID) {
   let browser = null;
@@ -28,7 +28,6 @@ async function getStudentInfo(studentID) {
       page.waitForSelector('.sweet-alert', { visible: true }).then(() => 'notFound'),
       new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout waiting for result")), 10000))
     ]);
-    
 
     const endTime = Date.now();
     const timeTaken = `${(endTime - startTime) / 1000} s`;
@@ -64,8 +63,11 @@ async function getStudentInfo(studentID) {
 }
 
 module.exports = async (req, res) => {
+  const allowedOrigin = process.env.CORS_ALLOW_ORIGIN || '*';
+  const isProduction = process.env.NODE_ENV === 'production';
+
   // Set CORS headers
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
@@ -74,7 +76,13 @@ module.exports = async (req, res) => {
     res.status(200).end();
     return;
   }
-  const studentID = req.query.id;
+
+  let studentID = req.query && req.query.id;
+  if (typeof studentID !== 'string') {
+    studentID = String(studentID || '').trim();
+  } else {
+    studentID = studentID.trim();
+  }
 
   if (!studentID) {
     return res.status(400).json({ error: "Student ID is required" });
@@ -85,6 +93,10 @@ module.exports = async (req, res) => {
     res.json(data);
   } catch (error) {
     console.error("Error in API handler:", error);
-    res.status(500).json({ error: "Failed to fetch student information", details: error.message });
+    const responsePayload = { error: "Failed to fetch student information" };
+    if (!isProduction) {
+      responsePayload.details = error.message;
+    }
+    res.status(500).json(responsePayload);
   }
 };
