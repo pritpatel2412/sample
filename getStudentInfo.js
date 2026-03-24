@@ -1,6 +1,8 @@
 const chrome = require('@sparticuz/chromium')
 const puppeteer = require('puppeteer-core')
 
+const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || '*'
+const API_KEY = process.env.API_KEY || ''
 
 async function getStudentInfo(studentID) {
   let browser = null;
@@ -55,28 +57,38 @@ async function getStudentInfo(studentID) {
     throw error;
   } finally {
     if (browser !== null) {
-      await browser.close();
+      try {
+        await browser.close();
+      } catch (closeErr) {
+        console.error("Failed to close browser:", closeErr);
+      }
     }
   }
 }
 
 module.exports = async (req, res) => {
+  // Security headers
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('Referrer-Policy', 'no-referrer');
+
   // Set CORS headers
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Origin', ALLOWED_ORIGIN);
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
   // Handle preflight requests
   if (req.method === 'OPTIONS') {
     res.status(200).end();
     return;
   }
-  const studentID = req.query.id;
+  const studentIDRaw = req.query.id;
+  const studentID = typeof studentIDRaw === 'string' ? studentIDRaw.trim() : '';
 
   if (!studentID) {
     return res.status(400).json({ error: "Student ID is required" });
   }
-API_KEY="sk-fknzsfnijdd"
+
   try {
     const data = await getStudentInfo(studentID);
     res.json(data);
