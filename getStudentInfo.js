@@ -24,7 +24,6 @@ async function getStudentInfo(studentID) {
       page.waitForSelector('.sweet-alert', { visible: true }).then(() => 'notFound'),
       new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout waiting for result")), 10000))
     ]);
-    
 
     const endTime = Date.now();
     const timeTaken = `${(endTime - startTime) / 1000} s`;
