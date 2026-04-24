@@ -1,6 +1,5 @@
-const chrome = require('@sparticuz/chromium')
-const puppeteer = require('puppeteer-core')
-
+const chrome = require('@sparticuz/chromium');
+const puppeteer = require('puppeteer-core');
 
 async function getStudentInfo(studentID) {
   let browser = null;
@@ -76,7 +75,7 @@ module.exports = async (req, res) => {
   if (!studentID) {
     return res.status(400).json({ error: "Student ID is required" });
   }
-API_KEY="sk-fknzsfnijdd"
+
   try {
     const data = await getStudentInfo(studentID);
     res.json(data);
