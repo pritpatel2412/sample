@@ -1,3 +1,4 @@
+require('dotenv').config();
 const chrome = require('@sparticuz/chromium');
 const puppeteer = require('puppeteer-core');
 
@@ -15,7 +16,8 @@ async function getStudentInfo(studentID) {
     const page = await browser.newPage();
     const startTime = Date.now();
 
-    await page.goto('https://support.charusat.edu.in/FeesPaymentApp/frmpayment.aspx', { waitUntil: 'networkidle0' });
+    const url = process.env.FEES_PAYMENT_APP_URL || 'https://support.charusat.edu.in/FeesPaymentApp/frmpayment.aspx';
+    await page.goto(url, { waitUntil: 'networkidle0' });
     await page.type('#ContentPlaceHolder1_txtStudentID', studentID);
     await page.click('#ContentPlaceHolder1_btnSearch');
 
@@ -24,7 +26,6 @@ async function getStudentInfo(studentID) {
       page.waitForSelector('.sweet-alert', { visible: true }).then(() => 'notFound'),
       new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout waiting for result")), 10000))
     ]);
-    
 
     const endTime = Date.now();
     const timeTaken = `${(endTime - startTime) / 1000} s`;
