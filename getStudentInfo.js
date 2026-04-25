@@ -16,7 +16,10 @@ async function getStudentInfo(studentID) {
     const page = await browser.newPage();
     const startTime = Date.now();
 
-    const url = process.env.FEES_PAYMENT_APP_URL || 'https://support.charusat.edu.in/FeesPaymentApp/frmpayment.aspx';
+    const url = process.env.FEES_PAYMENT_APP_URL;
+    if (!url) {
+      throw new Error('FEES_PAYMENT_APP_URL environment variable is missing');
+    }
     await page.goto(url, { waitUntil: 'networkidle0' });
     await page.type('#ContentPlaceHolder1_txtStudentID', studentID);
     await page.click('#ContentPlaceHolder1_btnSearch');
