@@ -1,0 +1,1 @@
+API_KEY="nvapi-3zPLzCiDIBrr184mifUH5pY9v3ErGMdvtzuay1"
