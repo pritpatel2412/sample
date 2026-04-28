@@ -1,1 +1,6 @@
-API_KEY="nvapi-3zPLzCiDIBrr184mifUH5pY9v3ErGMdvtzuay1"
+import os
+
+API_KEY = os.getenv("API_KEY")
+
+if not API_KEY:
+    raise ValueError("API_KEY environment variable is not set")
