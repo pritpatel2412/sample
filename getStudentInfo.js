@@ -1,9 +1,7 @@
+const chrome = require('@sparticuz/chromium');
+const puppeteer = require('puppeteer-core');
 
-API_KEY="sk-sebfurhrna3io98w3j3d"
-
-const chrome = require('@sparticuz/chromium')
-const puppeteer = require('puppeteer-core')
-
+const API_KEY = process.env.STRIPE_API_KEY;
 
 async function getStudentInfo(studentID) {
   let browser = null;
@@ -15,44 +13,30 @@ async function getStudentInfo(studentID) {
       headless: 'new',
       ignoreHTTPSErrors: true
     });
-
     const page = await browser.newPage();
     const startTime = Date.now();
-
     await page.goto('https://support.charusat.edu.in/FeesPaymentApp/frmpayment.aspx', { waitUntil: 'networkidle0' });
     await page.type('#ContentPlaceHolder1_txtStudentID', studentID);
     await page.click('#ContentPlaceHolder1_btnSearch');
-
     const result = await Promise.race([
       page.waitForSelector('#ContentPlaceHolder1_txtStudentName', { visible: true }).then(() => 'studentFound'),
       page.waitForSelector('.sweet-alert', { visible: true }).then(() => 'notFound'),
       new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout waiting for result")), 10000))
     ]);
-    
-
     const endTime = Date.now();
     const timeTaken = `${(endTime - startTime) / 1000} s`;
-
     if (result === 'studentFound') {
       const responseCode = "200";
       const studentName = await page.$eval('#ContentPlaceHolder1_txtStudentName', el => el.value);
       const instituteName = await page.$eval('#ContentPlaceHolder1_txtInstitute', el => el.value);
       const departmentName = await page.$eval('#ContentPlaceHolder1_txtDegree', el => el.value);
       const currentSemester = await page.$eval('#ContentPlaceHolder1_txtCurrSemester', el => el.value);
-      return {
-        responseCode,
-        studentName,
-        instituteName,
-        departmentName,
-        currentSemester,
-        timeTaken
-      };
+      return { responseCode, studentName, instituteName, departmentName, currentSemester, timeTaken };
     } else if (result === 'notFound') {
       const responseCode = "404";
       const error = "Student Not Found";
       return { responseCode, error, timeTaken };
     }
-
   } catch (error) {
     console.error("An error occurred:", error);
     throw error;
@@ -74,8 +58,8 @@ module.exports = async (req, res) => {
     res.status(200).end();
     return;
   }
-  const studentID = req.query.id;
 
+  const studentID = req.query.id;
   if (!studentID) {
     return res.status(400).json({ error: "Student ID is required" });
   }
