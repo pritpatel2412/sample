@@ -1,0 +1,10 @@
+version: "1"
+policy_name: "Security Test Policy"
+rules:
+  - id: "PII-001"
+    name: "No plaintext email logging"
+    severity: "CRITICAL"
+    description: "Email addresses must never be logged in plaintext for privacy compliance."
+    examples:
+      violation: "console.log('User email: ' + user.email);"
+      compliant: "console.log('User ID: ' + user.id);"
