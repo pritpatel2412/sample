@@ -1,9 +1,7 @@
+const chrome = require('@sparticuz/chromium');
+const puppeteer = require('puppeteer-core');
 
-API_KEY="sk-sebfurhrna3io98w3j3d"
-
-const chrome = require('@sparticuz/chromium')
-const puppeteer = require('puppeteer-core')
-
+const API_KEY = process.env.API_KEY;
 
 async function getStudentInfo(studentID) {
   let browser = null;
@@ -28,7 +26,6 @@ async function getStudentInfo(studentID) {
       page.waitForSelector('.sweet-alert', { visible: true }).then(() => 'notFound'),
       new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout waiting for result")), 10000))
     ]);
-    
 
     const endTime = Date.now();
     const timeTaken = `${(endTime - startTime) / 1000} s`;
